@@ -26,7 +26,7 @@ def call() {
 
   def scmCloneURL
 
-  node {
+  node('master') {
 
     withCredentials([
       [$class: 'UsernamePasswordMultiBinding',
