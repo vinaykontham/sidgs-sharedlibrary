@@ -30,7 +30,7 @@ def call() {
 
     withCredentials([
       [$class: 'UsernamePasswordMultiBinding',
-        credentialsId: "Github",
+        credentialsId: "github-token",
         usernameVariable: 'scmUser',
         passwordVariable: 'scmPassword'
       ],
@@ -86,7 +86,7 @@ def call() {
         }
         stage("create-scm-repo") {
          sh '''
-         curl -L -k POST -u $scmUser:$scmPassword https://api.github.com/orgs/SIDGS889732/repos -d '{"name":"'${ApiName}'","private":true}'
+         curl -L -k POST -u $scmUser:$scmPassword https://api.github.com/orgs/vinayko/repos -d '{"name":"'${ApiName}'","private":true}'
          '''
          // curl -k POST -u $scmUser:$scmPassword https://github.com/api/v3/repos -d '{"name":"'${ApiName}'","public":true}'
     }
@@ -94,13 +94,13 @@ def call() {
       stage("Code-push") {
         dir("target/${ApiName}") {
           // def defRepURL= scmCloneURL.split("@")[1]
-          def scmCloneURLFinal = "https://${env.scmUser}:${env.scmPassword}@github.com/SIDGS889732/${ApiName}"
+          def scmCloneURLFinal = "https://${env.scmUser}:${env.scmPassword}@github.com/vinayko/${ApiName}"
           runCommand "pwd"
           runCommand "ls -la"
           runCommand "git init"
           runCommand "git add ."
-          runCommand "git config --global user.email  srinivasulum@sidgs.com"
-          runCommand "git config --global user.name srinivasmurari"
+          runCommand "git config --global user.email vinayko@sidgs.com"
+          runCommand "git config --global user.name vinay"
           runCommand "git commit -m intial-commit"
           runCommand "git remote add origin ${scmCloneURLFinal}"
           runCommand "git push -u origin master"
