@@ -30,7 +30,7 @@ def call() {
 
     withCredentials([
       [$class: 'UsernamePasswordMultiBinding',
-        credentialsId: "vianykontham",
+        credentialsId: "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",
         usernameVariable: 'scmUser',
         passwordVariable: 'scmPassword'
       ],
