@@ -31,7 +31,7 @@ def call(String operation,String repoProjectName) {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "vinaykontham",
+                     credentialsId   : "github-token",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
                    
