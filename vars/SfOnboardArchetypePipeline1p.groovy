@@ -80,7 +80,7 @@ def call() {
             "-DartifactId=${params.sfName} " +
             "-Dpackage=sidgs-parent-pom" +
             "-DsfName=${params.sfName} " +
-            "-DinteractiveMode=false
+            "-DinteractiveMode=false"
         
         def appUrl = "${env.BUILD_URL}ws"
 
