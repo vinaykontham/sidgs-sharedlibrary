@@ -72,13 +72,13 @@ def call() {
         echo "Maven Home is ${mvnHome}"
         def mvnExecutable = "${mvnHome}/opt/maven"
 
-      def exampleApi = "mvn archetype:generate " +
-            "-DarchetypeGroupId=com.hdfc.sharedflow.archetype.poc " +
+     def exampleApi = "mvn archetype:generate " +
+            "-DarchetypeGroupId=com.sidgs.sharedflow.archetype.poc " +
             "-DarchetypeArtifactId=sf " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
-            "-DgroupId=com-hdfc-sharedflow " +
+            "-DgroupId=com-sidgs-sharedflow " +
             "-DartifactId=${params.sfName} " +
-            "-Dpackage=com.hdfc.sharedflow " +
+            "-Dpackage=sidgs-parent-pom " +
             "-DsfName=${params.sfName} " +
             "-DinteractiveMode=false"
         
