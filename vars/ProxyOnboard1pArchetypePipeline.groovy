@@ -170,7 +170,7 @@ def runCommand(String command) {
   if (!isUnix()) {
     println command
     if (command.trim().toLowerCase().startsWith("mvn")) {
-      withMaven(globalMavenSettingsConfig: 'jfrog2', maven: 'apigee-maven') {
+      withMaven(globalMavenSettingsConfig: 'cicd-settings-file', maven: 'apigee-maven') {
         bat returnStdout: true, script: "${command}"
       }
     } else {
@@ -180,7 +180,7 @@ def runCommand(String command) {
   } else {
     println command
     if (command.trim().toLowerCase().startsWith("mvn")) {
-      withMaven(globalMavenSettingsConfig: 'jfrog2', maven: 'apigee-maven') {
+      withMaven(globalMavenSettingsConfig: 'cicd-settings-file', maven: 'apigee-maven') {
         sh returnStdout: true, script: command
       }
     } else {
