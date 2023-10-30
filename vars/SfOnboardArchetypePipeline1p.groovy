@@ -35,7 +35,7 @@ def call() {
         passwordVariable: 'scmPassword'
       ],
       [$class: 'UsernamePasswordMultiBinding',
-        credentialsId: "git_test1_oauth",
+        credentialsId: "github_token",
         usernameVariable: 'scmClient',
         passwordVariable: 'scmSecret'
       ],
