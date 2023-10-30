@@ -73,7 +73,7 @@ def call() {
         def mvnExecutable = "${mvnHome}/opt/maven"
 
        def exampleApi = "mvn archetype:generate " +
-            "-DarchetypeGroupId=com.sidgs.sharedflow.archetype " +
+            "-DarchetypeGroupId=com.sidgs.sharedflow.archetype.sf " +
             "-DarchetypeArtifactId=sf " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
             "-DgroupId=com-sidgs-sharedflow " +
