@@ -30,7 +30,7 @@ def call() {
 
     withCredentials([
       [$class: 'UsernamePasswordMultiBinding',
-        credentialsId: "newgithubid",
+        credentialsId: "github-token",
         usernameVariable: 'scmUser',
         passwordVariable: 'scmPassword'
       ],
@@ -73,12 +73,12 @@ def call() {
         def mvnExecutable = "${mvnHome}/opt/maven"
 
        def exampleApi = "mvn archetype:generate " +
-            "-DarchetypeGroupId=com.hdfc.sharedflow.archetype.poc " +
+            "-DarchetypeGroupId=com.sidgs.sharedflow.archetype.poc " +
             "-DarchetypeArtifactId=sf " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
-            "-DgroupId=com-hdfc-sharedflow " +
+            "-DgroupId=com-sidgs-sharedflow " +
             "-DartifactId=${params.sfName} " +
-            "-Dpackage=com.hdfc.sharedflow " +
+            "-Dpackage=com.sidgs.sharedflow " +
             "-DsfName=${params.sfName} " +
             "-DinteractiveMode=false"
         
@@ -95,20 +95,20 @@ def call() {
         stage("create-scm-repo") {
          sh '''
          
-         curl -k POST -u $scmUser:$scmPassword https://github.hdfcbankuat.com/api/v3/orgs/ALCMAPIGEEUAT/repos -d '{"name":"'${sfName}'","private":true}'
+         curl -k POST -u $scmUser:$scmPassword https://github.com/vinayko/repos -d '{"name":"'${sfName}'","private":true}'
          '''
     }
 
       stage("Code-push") {
         dir("target/${sfName}") {
           // def defRepURL= scmCloneURL.split("@")[1]
-          def scmCloneURLFinal = "https://${env.scmUser}:${env.scmPassword}@github.hdfcbankuat.com/ALCMAPIGEEUAT/${sfName}"
+          def scmCloneURLFinal = "https://${env.scmUser}:${env.scmPassword}@github.com/vinayko/${sfName}"
           runCommand "pwd"
           runCommand "ls -la"
           runCommand "git init"
           runCommand "git add ."
-          runCommand "git config --global user.email  pawan.kopparthi@hdfcbank.com"
-          runCommand "git config --global user.name UATHYCESIDGSE354"
+          runCommand "git config --global user.email  vinayko@sidgs.com"
+          runCommand "git config --global user.name vinaykontham"
           runCommand "git commit -m intial-commit"
           runCommand "git remote add origin ${scmCloneURLFinal}"
           runCommand "git push -u origin master"
@@ -176,7 +176,7 @@ def runCommand(String command) {
   if (!isUnix()) {
     println command
     if (command.trim().toLowerCase().startsWith("mvn")) {
-      withMaven(globalMavenSettingsConfig: 'jfrog2', maven: 'maven') {
+      withMaven(globalMavenSettingsConfig: 'cicd-settings-file', maven: 'maven') {
         bat returnStdout: true, script: "${command}"
       }
     } else {
@@ -186,7 +186,7 @@ def runCommand(String command) {
   } else {
     println command
     if (command.trim().toLowerCase().startsWith("mvn")) {
-      withMaven(globalMavenSettingsConfig: 'jfrog2', maven: 'maven') {
+      withMaven(globalMavenSettingsConfig: 'cicd-settings-file', maven: 'maven') {
         sh returnStdout: true, script: command
       }
     } else {
