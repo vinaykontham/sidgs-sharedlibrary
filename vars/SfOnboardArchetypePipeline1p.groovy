@@ -73,12 +73,12 @@ def call() {
           def mvnExecutable = "${mvnHome}/usr/share/maven"
         
           def exampleApi = "mvn archetype:generate " +
-            "-DarchetypeGroupId=com.bdo.sharedflow.archetype " +
-            "-DarchetypeArtifactId=apigeex-sf-pass-through " +
+            "-DarchetypeGroupId=com.hdfc.sharedflow.commons " +
+            "-DarchetypeArtifactId=sharedflows-parent-pom " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
-            "-DgroupId=com.bdo.apigee " +
+            "-DgroupId=com.hdfc.sharedflow " +
             "-DartifactId=${params.SharedFlow} " +
-            "-Dpackage=com-bdo-apigee " +
+            "-Dpackage=com.hdfc.sharedflow " +
             "-DSharedFlow=${params.SharedFlow} " +
             "-DinteractiveMode=false"
         
