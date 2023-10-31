@@ -76,9 +76,9 @@ def call() {
             "-DarchetypeGroupId=com.hdfc.sharedflow.commons " +
             "-DarchetypeArtifactId=sharedflows-parent-pom " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
-            "-DgroupId=com.hdfc.sharedflow " +
+            "-DgroupId=com-hdfc-sharedflow-commons " +
             "-DartifactId=${params.SharedFlow} " +
-            "-Dpackage=com.hdfc.sharedflow " +
+            "-Dpackage=hdfc.parent-pom " +
             "-DSharedFlow=${params.SharedFlow} " +
             "-DinteractiveMode=false"
         
