@@ -76,7 +76,7 @@ def call() {
             "-DarchetypeGroupId=com.sidgs.sharedflow.commons " +
             "-DarchetypeArtifactId=sharedflows-parent-pom " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
-            "-DgroupId=com-sidgs-sharedflow-commons " +
+            "-DgroupId=com-sidgs-archetype " +
             "-DartifactId=${params.sfName} " +
             "-Dpackage=sidgs-sharedflows-parent-pom" +
             "-DsfName=${params.sfName} " +
