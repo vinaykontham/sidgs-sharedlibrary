@@ -70,9 +70,9 @@ def call() {
         def mvnHome = tool name: DefaultConfigService.instance.tools.maven, type: 'maven'
 
         echo "Maven Home is ${mvnHome}"
-        def mvnExecutable = "${mvnHome}/opt/maven"
+          def mvnExecutable = "${mvnHome}/usr/share/maven"
 
-  def exampleApi = "mvn archetype:generate " +
+        def exampleApi = "mvn archetype:generate " +
             "-DarchetypeGroupId=com.sidgs.sharedflow.commons " +
             "-DarchetypeArtifactId=sharedflows-parent-pom " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
@@ -81,6 +81,7 @@ def call() {
             "-Dpackage=sidgs-sharedflows-parent-pom" +
             "-DsfName=${params.sfName} " +
             "-DinteractiveMode=false"
+        
         def appUrl = "${env.BUILD_URL}ws"
 
         echo "API Generated Can be Found Here : ${appUrl}"
