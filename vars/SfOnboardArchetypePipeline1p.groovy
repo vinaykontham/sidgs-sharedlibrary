@@ -73,12 +73,12 @@ def call() {
           def mvnExecutable = "${mvnHome}/usr/share/maven"
         
           def exampleApi = "mvn archetype:generate " +
-            "-DarchetypeGroupId=com.hdfc.sharedflow.commons.poc" +
-            "-DarchetypeArtifactId=sharedflows-parent-pom " +
+            "-DarchetypeGroupId=com.hdfc.sharedflow.arctype.poc" +
+            "-DarchetypeArtifactId=sf " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
             "-DgroupId=com-hdfc-sharedflow-commons " +
             "-DartifactId=${params.SharedFlow} " +
-            "-Dpackage=hdfc-parent-pom " +
+            "-Dpackage=sharedflows-parent-pom " +
             "-DSharedFlow=${params.SharedFlow} " +
             "-DinteractiveMode=false"
         
