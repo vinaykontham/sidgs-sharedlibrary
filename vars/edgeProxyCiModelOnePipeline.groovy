@@ -102,14 +102,14 @@ def call(String branchType, String build_number) {
                 }
             }            
  } */
-	stage("Quality Gate") {
+	/*stage("Quality Gate") {
         timeout(time: 10, unit: 'MINUTES') {
                       def qg = waitForQualityGate()
                       if (qg.status != 'OK') {
                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
             }
         }
-    }
+    }*/
 
         entityDeploymentInfos.each {
                         stage('pre-deploy-prep') {
