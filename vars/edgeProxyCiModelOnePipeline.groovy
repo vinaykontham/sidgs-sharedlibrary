@@ -121,7 +121,7 @@ def call(String branchType, String build_number) {
                             }                            
                         }
 
-                        stage('deploy-proxy') {
+                        /*stage('deploy-proxy') {
 
                             withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                                 echo "deploying apirpoxy"
@@ -133,7 +133,17 @@ def call(String branchType, String build_number) {
                             DeploymentInfoService.instance.setEdgeEnv("${it.env}")
                             DeploymentInfoService.instance.saveDeploymentStatus("DEPLOYMENT-SUCCESS", env.BUILD_URL, jenkinsUserUtils.getUsernameForBuild())
 
-                        }
+                        }*/
+		stage('deploy-proxy') {
+    withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
+        echo "deploying apiproxy"
+        maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount}")
+    }
+    DeploymentInfoService.instance.setApiName(artifactId)
+    DeploymentInfoService.instance.setApiVersion(version)
+    DeploymentInfoService.instance.setEdgeEnv("${it.env}")
+    DeploymentInfoService.instance.saveDeploymentStatus("DEPLOYMENT-SUCCESS", env.BUILD_URL, jenkinsUserUtils.getUsernameForBuild())
+}
 
 
                         stage('post-deploy') {
