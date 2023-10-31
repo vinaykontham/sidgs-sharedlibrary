@@ -135,9 +135,9 @@ def call(String branchType, String build_number) {
 
                         }*/
 		stage('deploy-proxy') {
-    withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
+    withCredentials([file(credentialsId: it.org, variable: 'file')]) {
         echo "deploying apiproxy"
-        maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount}")
+        maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${file}")
     }
     DeploymentInfoService.instance.setApiName(artifactId)
     DeploymentInfoService.instance.setApiVersion(version)
