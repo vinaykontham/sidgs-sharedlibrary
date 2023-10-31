@@ -34,11 +34,7 @@ def call() {
         usernameVariable: 'scmUser',
         passwordVariable: 'scmPassword'
       ],
-      [$class: 'UsernamePasswordMultiBinding',
-        credentialsId: "github_token",
-        usernameVariable: 'scmClient',
-        passwordVariable: 'scmSecret'
-      ],
+     
 
     ]) {
 
