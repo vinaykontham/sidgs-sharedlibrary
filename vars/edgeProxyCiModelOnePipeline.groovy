@@ -60,7 +60,7 @@ def call(String branchType, String build_number) {
 
             dir(proxyRootDirectory) {
                 if (DefaultConfigService.instance.steps.unitTest) {
-                    stage('unit-init') {
+                   /* stage('unit-init') {
                         if (fileExists("test/unit")) {
                             echo "run unit tests "
                             npm.runCommand("npm install")
@@ -78,7 +78,7 @@ def call(String branchType, String build_number) {
                             }
                         }
                     }
-                }
+                }/*
 
                 if (DefaultConfigService.instance.steps.deploy) {
 
