@@ -1,96 +1,81 @@
 import CICDEnvUtils
+import com.apigee.boot.ConfigType
+import com.apigee.boot.Pipeline
 import com.apigee.cicd.service.AssetService
+import com.apigee.cicd.service.CIEnvInfoService
+import com.apigee.cicd.service.DefaultConfigService
+import com.apigee.cicd.service.DeploymentInfoService
+import com.apigee.cicd.service.OrgInfoService
 import com.apigee.loader.BootStrapConfigLoad
 import groovy.json.JsonSlurper
 import groovy.transform.Field
 import hudson.AbortException
 import hudson.model.Cause
 import pom
-import com.apigee.boot.Pipeline
-import com.apigee.cicd.service.CIEnvInfoService
-import com.apigee.cicd.service.DeploymentInfoService
-import com.apigee.cicd.service.DefaultConfigService
-import com.apigee.cicd.service.FunctionalTestService
-import com.apigee.cicd.service.OrgInfoService
-import Maven
-import JenkinsUserUtils
-
 
 /*
-This pipeline is used for performing CI on apirpoxies
+This pipeline is used to perform CI on sharedflows
  */
+
+
 def call(String branchType, String build_number) {
 
-    node {
-        deleteDir()
+  node  {
+	   
+     deleteDir()
+	  
+	 
+    try {
+	   
+      stage('Checkout') {
+        checkout scm
+      }
+      echo " Stating CiPipeline for branchType = ${branchType}"
+
+      Maven maven = new Maven()
+      JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
+      /*Npm npm= new Npm()*/
+      def pom = new pom(),
+          proxyRootDirectory = "edge",
+          artifactId = pom.artifactId("./${proxyRootDirectory}/pom.xml"),
+          version =pom.version("./${proxyRootDirectory}/pom.xml"),
+          entityDeploymentInfos
+
+      echo artifactId
+
+
+      withFolderProperties {
+        BootStrapConfigLoad configLoad = new BootStrapConfigLoad();
         try {
-            stage('Checkout') {
-                checkout scm
-            }
-            echo " Stating CiPipeline for branchType = ${branchType}"
+          configLoad.setupConfig("${env.API_SERVER_LOCATION}")
+          configLoad.setupAssetConfiguration("${env.API_SERVER_LOCATION}","${artifactId}")
+        } catch (MalformedURLException e) {
+          e.printStackTrace();
+        }
+      }
 
-            Maven maven = new Maven()
-            JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
-            Npm npm= new Npm()
-            def pom = new pom(),
-                proxyRootDirectory = "edge",
-                artifactId = pom.artifactId("./${proxyRootDirectory}/pom.xml"),
-                version =pom.version("./${proxyRootDirectory}/pom.xml"),
-                entityDeploymentInfos
+      /*
+          Populating asset deployment data
+       */
+      AssetService.instance.data.branchMappings.each{ branchMapping ->
+        if(branchMapping.branchPattern =~ branchType)
+        {
+          entityDeploymentInfos=branchMapping.deploymentInfo
+        }
+      }
 
-            withFolderProperties {
-                BootStrapConfigLoad configLoad = new BootStrapConfigLoad();
-                try {
-                    configLoad.setupConfig("${env.API_SERVER_LOCATION}")
-                    configLoad.setupAssetConfiguration("${env.API_SERVER_LOCATION}","${artifactId}")
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-            }
+      dir(proxyRootDirectory) {
 
-            /*
-                Populating asset deployment data
-             */
-            AssetService.instance.data.branchMappings.each{ branchMapping ->
-                if(branchMapping.branchPattern =~ branchType)
-                {
-                    entityDeploymentInfos=branchMapping.deploymentInfo
-                }
-            }
-
-            dir(proxyRootDirectory) {
-                if (DefaultConfigService.instance.steps.unitTest) {
-                   /* stage('unit-init') {
-                        if (fileExists("test/unit")) {
-                            echo "run unit tests "
-                            npm.runCommand("npm install")
-                            npm.runCommand("node node_modules/istanbul/lib/cli.js cover --dir target/unit-init-coverage node_modules/mocha/bin/_mocha test/unit")
-                            if (true) {
-                                echo "publish html report"
-                                publishHTML(target: [
-                                        allowMissing         : false,
-                                        alwaysLinkToLastBuild: false,
-                                        keepAll              : true,
-                                        reportDir            : "target/unit-init-coverage/lcov-report",
-                                        reportFiles          : 'index.html',
-                                        reportName           : 'Code Coverage HTML Report'
-                                ])
-                            }
-                        }
-                    }
-                }/*
-
-                if (DefaultConfigService.instance.steps.deploy) {
-
-                    stage('build-proxy') {
+        if (DefaultConfigService.instance.steps.unitTest) {
+		 stage('build-proxy') {
                         maven.runCommand("mvn package -Phybrid-apiproxy")
                     }
-
-                    if (DefaultConfigService.instance.steps.lint) {
-                        stage('proxy-lint') {
+	if (DefaultConfigService.instance.steps.lint) {	
+	        /*stage('proxy-lint') {
                             echo "testing apigee-lint"
                             npm.runCommand("npm install")
-                            npm.runCommand("apigeelint -s apiproxy -e BN001 -f html.js > target/apigeelint.html")
+		    
+                            npm.runCommand("apigeelint -s apiproxy -f html.js > target/apigeelint.html")
                             if (true) {
                                 echo "publish html report"
                                 publishHTML(target: [
@@ -102,23 +87,46 @@ def call(String branchType, String build_number) {
                                         reportName           : 'Apigeelint HTML Report'
                                 ])
                             }
-                        }
+                        }*/
+	}
 
-                    }
+	/*stage('Start Sonar qube Analysis') {  
+		environment {
+            scannerHome = tool 'sonarqubetest_jenkins'
+            }
+		
+            dir('edge/apiproxy') {
+		    sh "pwd"
+                withSonarQubeEnv(installationName: 'sonarqubetest', credentialsId: 'sonar_250123') {
+                sh "${sonarqubetest_jenkins} -Dsonar.projectKey=api-sonar -Dsonar.sources=."
+                }
+            }            
+ } */
+	/*stage("Quality Gate") {
+        timeout(time: 10, unit: 'MINUTES') {
+                      def qg = waitForQualityGate()
+                      if (qg.status != 'OK') {
+                           error "Pipeline aborted due to quality gate failure: ${qg.status}"
+            }
+        }
+    }*/
 
-                entityDeploymentInfos.each {
+        entityDeploymentInfos.each {
                         stage('pre-deploy-prep') {
-                            withCredentials([file(credentialsId: it.org, variable: 'file')]) {
+                            withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                                 echo "load api product for integration init"
-                                //maven.runCommand("mvn -X package apigee-config:targetservers -Phybrid-apiproxy -Dapigee.config.options=update -Dorg=${it.org} -Denv=${it.env} -Dfile=${file}")
-                            }
+                               // maven.runCommand("mvn -X package apigee-config:targetservers -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
+                               // maven.runCommand("mvn -X package apigee-config:flowhooks -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
+                               // maven.runCommand("mvn -X package apigee-config:resourcefiles -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")                            
+                            }                            
                         }
 
                         stage('deploy-proxy') {
 
-                            withCredentials([file(credentialsId: it.org, variable: 'file')]) {
+                            withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                                 echo "deploying apirpoxy"
-                                maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${file}")
+				               
+                                maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount}")
                             }
                             DeploymentInfoService.instance.setApiName(artifactId)
                             DeploymentInfoService.instance.setApiVersion(version)
@@ -128,26 +136,26 @@ def call(String branchType, String build_number) {
                         }
 
 
-                        // stage('post-deploy') {
+                        stage('post-deploy') {
 
-                        //     withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
-                        //         if (fileExists("resources/edge/org/apiProducts.json")) {
-                        //             echo "load api product for integration init"
-                        //             maven.runCommand("mvn -X apigee-config:apiproducts -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
-                        //         }
-                        //         if (fileExists("resources/edge/org/developers.json")) {
-                        //             echo "load api developer for integration init"
-                        //             maven.runCommand("mvn -X apigee-config:developers -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
-                        //         }
-                        //         if (fileExists("resources/edge/org/developerApps.json")) {
-                        //             echo "load api developer app for integration init"
-                        //             maven.runCommand("mvn -X apigee-config:apps -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
-                        //             echo "export app key for integration init"
-                        //             maven.runCommand("mvn -X apigee-config:exportAppKeys -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
-                        //         }
-                        //     }
+                            withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
+                                if (fileExists("resources/edge/org/apiProducts.json")) {
+                                    echo "load api product for integration init"
+                                   // maven.runCommand("mvn -X apigee-config:apiproducts -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
+                                }
+                                if (fileExists("resources/edge/org/developers.json")) {
+                                    echo "load api developer for integration init"
+                                    //maven.runCommand("mvn -X apigee-config:developers -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
+                                }
+                                if (fileExists("resources/edge/org/developerApps.json")) {
+                                    echo "load api developer app for integration init"
+                                   // maven.runCommand("mvn -X apigee-config:apps -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
+                                    echo "export app key for integration init"
+                                   // maven.runCommand("mvn -X apigee-config:exportAppKeys -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=update")
+                                }
+                            }
 
-                        // }
+                        }
 
 //
 //
@@ -200,29 +208,29 @@ def call(String branchType, String build_number) {
 //                    }
 
 
-//                    stage('undeploy-org-config') {
-//                        withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
-//                            if (fileExists("resources/edge/org/developerApps.json")) {
-//                                echo "delete developer app"
-//                                maven.runCommand("mvn -X apigee-config:apps -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=delete")
-//                            }
-//                            if (fileExists("resources/edge/org/apiProducts.json")) {
-//                                echo "delete api product"
-//                                maven.runCommand("mvn -X apigee-config:apiproducts -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=delete")
-//                            }
-//                            if (fileExists("resources/edge/org/developers.json")) {
-//                                echo "delete developer"
-//                                maven.runCommand("mvn -X apigee-config:developers -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=delete")
-//                            }
-//                        }
-//                    }
+                    stage('undeploy-org-config') {
+                        withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
+                            if (fileExists("resources/edge/org/developerApps.json")) {
+                                echo "delete developer app"
+                                //maven.runCommand("mvn -X apigee-config:apps -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=delete")
+                            }
+                            if (fileExists("resources/edge/org/apiProducts.json")) {
+                                echo "delete api product"
+                               // maven.runCommand("mvn -X apigee-config:apiproducts -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=delete")
+                            }
+                            if (fileExists("resources/edge/org/developers.json")) {
+                                echo "delete developer"
+                               // maven.runCommand("mvn -X apigee-config:developers -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount} -Dapigee.config.options=delete")
+                            }
+                        }
+                    }
                 }
 
 
 
             if (DefaultConfigService.instance.steps.release) {
                         stage('upload-artifact') {
-                            withCredentials([file(credentialsId: 'cicd-settings-file', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                            withCredentials([usernameColonPassword(credentialsId: 'cicd-settings-file', variable: 'NEXUS')]) {
                             maven.runCommand("mvn -X deploy")
                         }
                         }
@@ -238,3 +246,8 @@ def call(String branchType, String build_number) {
         }
     }
 }
+
+
+
+
+
