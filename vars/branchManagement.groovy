@@ -31,13 +31,10 @@ def call(String operation,String repoProjectName) {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "newgithubid",
+                     credentialsId   : "github_token",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
-                    [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "git_test1_oauth",
-                     usernameVariable: 'scmClient',
-                     passwordVariable: 'scmSecret'],
+                    
             ])
 
                     {
