@@ -15,14 +15,15 @@ import Maven
 import JenkinsUserUtils
 import shell
 import BranchManagerService
+
 /*
 This pipeline is used for handling branch management on the repos
-1. Feature branchches
+1. Feature branches
 2. Hotfix branches
 3. Release branches
 4. Release candidates
  */
-def call(String operation,String repoProjectName) {
+def call(String operation, String repoProjectName) {
 
     node('master') {
         deleteDir()
@@ -30,26 +31,27 @@ def call(String operation,String repoProjectName) {
         try {
 
             withCredentials([
-    [$class: 'UsernamePasswordMultiBinding',
-     credentialsId: "github-token",
-     usernameVariable: 'scmUser',
-     passwordVariable: 'scmPassword']
-]) { // Add the closure parameter list here
-    // Your code inside the closure
-    withFolderProperties {
-        BootStrapConfigLoad configLoad = new BootStrapConfigLoad();
-        try {
-            scmAPILocation = env.API_SCM_LOCATION
-            scmOauthServerLocation = env.API_SCM_OAUTH_SERVER
-            configLoad.setupConfig("${env.API_SERVER_LOCATION}")
-        } catch (MalformedURLException e) {
-            e.printStackTrace()
-        }
-    }
-}
+                    [$class          : 'UsernamePasswordMultiBinding',
+                     credentialsId   : "github-token",
+                     usernameVariable: 'scmUser',
+                     passwordVariable: 'scmPassword'],
+            ]) { // Add an explicit parameter list here
 
+                withFolderProperties {
 
-                       /*stage("get scm token") {
+                    BootStrapConfigLoad configLoad = new BootStrapConfigLoad()
+                    try {
+                        scmAPILocation = env.API_SCM_LOCATION
+                        scmOauthServerLocation = env.API_SCM_OAUTH_SERVER
+                        configLoad.setupConfig("${env.API_SERVER_LOCATION}")
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
+            // Rest of your script...
+             /*stage("get scm token") {
                             def userDetails = "${env.scmClient}:${env.scmSecret}";
                             def encodedUser = userDetails.bytes.encodeBase64().toString()
                             def response = httpRequest httpMode: 'POST',
@@ -175,3 +177,4 @@ def runCommand(String command) {
 
     }
 }
+
