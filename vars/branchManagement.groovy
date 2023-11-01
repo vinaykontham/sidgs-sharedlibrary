@@ -26,7 +26,7 @@ def call(String operation,String repoProjectName) {
 
     /*node {
         deleteDir()
-        def shell = new shell()*/
+        def shell = new shell()
         try {
 
             withCredentials([
@@ -35,7 +35,7 @@ def call(String operation,String repoProjectName) {
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
                    
-            ])
+            ])*/
 
                     {
 
