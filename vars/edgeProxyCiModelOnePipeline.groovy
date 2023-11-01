@@ -34,7 +34,7 @@ def call(String branchType, String build_number) {
 
       Maven maven = new Maven()
       JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
-      /*Npm npm= new Npm()*/
+      Npm npm= new Npm()
       def pom = new pom(),
           proxyRootDirectory = "edge",
           artifactId = pom.artifactId("./${proxyRootDirectory}/pom.xml"),
