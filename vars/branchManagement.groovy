@@ -66,14 +66,14 @@ def call(String operation,String repoProjectName) {
 
 
                         stage('Checkout') {
-                            //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
+                            wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
                               shell.pipe("git clone https://${scmUser}:${scmPassword}@https://github.com/vinaykontham/sidgs-sharedlibrary${ApiName}.git")
                                 shell.pipe("ls -la")
                                 shell.pipe("pwd")
                               shell.pipe("cd ${ApiName} ")
                                 shell.pipe("ls -la")
                             }
-                        //}
+                        }
                     }
 
 
