@@ -27,7 +27,7 @@ def call(String build_number, String repoApiName) {
         try {
 
             stage('access-token') {
-			withCredentials([file(credentialsId: 'hdfcbank-apigee-runtime-uat', variable: 'serviceAccount')]) {
+			withCredentials([file(credentialsId: 'github_token', variable: 'serviceAccount')]) {
                             script {
                                git branch: 'master', credentialsId: 'newgithubid', url: 'https://github.hdfcbankuat.com/ALCMAPIGEEUAT/token-repo.git'
                             sh '''
@@ -68,13 +68,10 @@ def call(String build_number, String repoApiName) {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "newgithubid",
+                     credentialsId   : "gitgub_token",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
-                    [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "git_test1_oauth",
-                     usernameVariable: 'scmClient',
-                     passwordVariable: 'scmSecret'],
+                   
             ])
                     {
 
@@ -103,8 +100,9 @@ def call(String build_number, String repoApiName) {
                         }*/
 
                         stage('Checkout') {
-                            //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
-                                shell.pipe("git clone https://${scmUser}:${scmPassword}@github.hdfcbankuat.com/ALCMAPIGEEUAT/${ApiName}.git")
+                            //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]])
+				{
+                                shell.pipe("git clone https://${scmUser}:${scmPassword}@github.com/vinayko/${ApiName}.git")
 
                             }
                         //}
@@ -152,7 +150,7 @@ def call(String build_number, String repoApiName) {
 
                             withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                                 echo "deploying apirpoxy"
-                                maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dbearer=${token}")
+                                maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-apiproxy -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount}")
                             }
                             DeploymentInfoService.instance.setApiName(artifactId)
                             DeploymentInfoService.instance.setApiVersion(version)
@@ -311,7 +309,7 @@ def call(String build_number, String repoApiName) {
 
                         stage('upload-artifact') {
                             
-                            withCredentials([usernameColonPassword(credentialsId: 'artifactory_id', variable: 'NEXUS')]) {
+                            withCredentials([usernameColonPassword(credentialsId: 'jfrog', variable: 'NEXUS')]) {
                             maven.runCommand("mvn -X deploy")
 			    }
                         }
