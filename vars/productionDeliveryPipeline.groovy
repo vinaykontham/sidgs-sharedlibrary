@@ -20,7 +20,7 @@ import shell
 This pipeline is used to perform CD on apiproxies
  */
 def call(String build_number, String repoApiName) {
-    node("master") { 
+    node { 
         deleteDir()
         def shell = new shell()
 
