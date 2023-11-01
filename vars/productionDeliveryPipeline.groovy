@@ -29,7 +29,7 @@ def call(String build_number, String repoApiName) {
             stage('access-token') {
 			withCredentials([file(credentialsId: 'github_token', variable: 'serviceAccount')]) {
                             script {
-                               git branch: 'rel-1.0.0', credentialsId: 'newgithubid', url: 'https://github.hdfcbankuat.com/ALCMAPIGEEUAT/token-repo.git'
+                               git branch: 'master', credentialsId: 'github_token', url: 'https://github.com/vinyko/token-repo.git'
                             sh '''
                             ls -la
                             
