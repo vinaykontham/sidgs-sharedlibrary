@@ -25,56 +25,39 @@ This pipeline is used for handling branch management on the repos
  */
 def call(String operation, String repoProjectName) {
 
-    node('master') {
-        deleteDir()
-        def shell = new shell()
-        try {
+   node('master') {
+    deleteDir()
+    def shell = new shell()
+    try {
+        withCredentials([
+            [$class: 'UsernamePasswordMultiBinding',
+             credentialsId: "github-token",
+             usernameVariable: 'scmUser',
+             passwordVariable: 'scmPassword'],
+        ]) { credentials ->
+            // The 'credentials' variable contains the credential values
 
-            withCredentials([
-                    [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "github-token",
-                     usernameVariable: 'scmUser',
-                     passwordVariable: 'scmPassword'],
-            ]) { // Add an explicit parameter list here
-
-                withFolderProperties {
-
-                    BootStrapConfigLoad configLoad = new BootStrapConfigLoad()
-                    try {
-                        scmAPILocation = env.API_SCM_LOCATION
-                        scmOauthServerLocation = env.API_SCM_OAUTH_SERVER
-                        configLoad.setupConfig("${env.API_SERVER_LOCATION}")
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace()
-                    }
+            withFolderProperties {
+                BootStrapConfigLoad configLoad = new BootStrapConfigLoad()
+                try {
+                    scmAPILocation = env.API_SCM_LOCATION
+                    scmOauthServerLocation = env.API_SCM_OAUTH_SERVER
+                    configLoad.setupConfig("${env.API_SERVER_LOCATION}")
+                } catch (MalformedURLException e) {
+                    e.printStackTrace()
                 }
             }
 
-            // Rest of your script...
-             /*stage("get scm token") {
-                            def userDetails = "${env.scmClient}:${env.scmSecret}";
-                            def encodedUser = userDetails.bytes.encodeBase64().toString()
-                            def response = httpRequest httpMode: 'POST',
-                                    customHeaders: [[name: "Authorization", value: "Basic ${encodedUser}"], [name: "content-type", value: "application/x-www-form-urlencoded"]],
-                                    url: "${scmOauthServerLocation}",
-                                    requestBody: "grant_type=client_credentials"
-                            def responseJson = new JsonSlurper().parseText(response.content)
-                            scmAccessToken = responseJson.access_token
-                            
-                        }*/
-
-
-                        stage('Checkout') {
-                          //  wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) 
-                            {
-                              shell.pipe("git clone https://${scmUser}:${scmPassword}@https://github.com/vinaykontham/sidgs-sharedlibrary${ApiName}.git")
-                                shell.pipe("ls -la")
-                                shell.pipe("pwd")
-                              shell.pipe("cd ${ApiName} ")
-                                shell.pipe("ls -la")
-                            }
-                       }
-                    }
+            stage('Checkout') {
+                // Use 'credentials' to access the username and password
+                shell.pipe("git clone https://${credentials.scmUser}:${credentials.scmPassword}@https://github.com/vinaykontham/sidgs-sharedlibrary${ApiName}.git")
+                shell.pipe("ls -la")
+                shell.pipe("pwd")
+                shell.pipe("cd ${ApiName} ")
+                shell.pipe("ls -la")
+            }
+        }
+    }
         
 
 
@@ -108,13 +91,13 @@ def call(String operation, String repoProjectName) {
                 }
             }
             }
-            catch (any) {
-                JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
-                println any.toString()
-                currentBuild.result = 'FAILURE'
-                DeploymentInfoService.instance.saveDeploymentStatus("FAILURE", env.BUILD_URL,jenkinsUserUtils.getUsernameForBuild())
-            }
-        }
+          catch (any) {
+        JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
+        println any.toString()
+        currentBuild.result = 'FAILURE'
+        DeploymentInfoService.instance.saveDeploymentStatus("FAILURE", env.BUILD_URL, jenkinsUserUtils.getUsernameForBuild())
+    }
+
     }
 
 @NonCPS
