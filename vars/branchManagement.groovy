@@ -76,7 +76,7 @@ def call(String operation,String repoProjectName) {
                             }
                        }
                     }
-
+        }
 
 
             dir("${ApiName}") {
@@ -108,7 +108,7 @@ def call(String operation,String repoProjectName) {
                         break
                 }
             }
-        }
+            }
             catch (any) {
                 JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
                 println any.toString()
@@ -178,4 +178,3 @@ def runCommand(String command) {
 
     }
 }
-
