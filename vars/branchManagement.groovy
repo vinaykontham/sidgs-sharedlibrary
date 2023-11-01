@@ -30,27 +30,24 @@ def call(String operation,String repoProjectName) {
         try {
 
             withCredentials([
-                    [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "github-token",
-                     usernameVariable: 'scmUser',
-                     passwordVariable: 'scmPassword'],
-                   
-            ])
+    [$class: 'UsernamePasswordMultiBinding',
+     credentialsId: "github-token",
+     usernameVariable: 'scmUser',
+     passwordVariable: 'scmPassword']
+]) { // Add the closure parameter list here
+    // Your code inside the closure
+    withFolderProperties {
+        BootStrapConfigLoad configLoad = new BootStrapConfigLoad();
+        try {
+            scmAPILocation = env.API_SCM_LOCATION
+            scmOauthServerLocation = env.API_SCM_OAUTH_SERVER
+            configLoad.setupConfig("${env.API_SERVER_LOCATION}")
+        } catch (MalformedURLException e) {
+            e.printStackTrace()
+        }
+    }
+}
 
-                    {
-
-                        withFolderProperties {
-
-                            BootStrapConfigLoad configLoad = new BootStrapConfigLoad();
-                            try {
-                                scmAPILocation = env.API_SCM_LOCATION
-                                scmOauthServerLocation = env.API_SCM_OAUTH_SERVER
-                                configLoad.setupConfig("${env.API_SERVER_LOCATION}")
-                            }
-                            catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            }
-                        }
 
                        /*stage("get scm token") {
                             def userDetails = "${env.scmClient}:${env.scmSecret}";
