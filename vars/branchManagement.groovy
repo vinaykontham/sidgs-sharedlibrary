@@ -24,18 +24,18 @@ This pipeline is used for handling branch management on the repos
  */
 def call(String operation,String repoProjectName) {
 
-    node ('master'){
+    node('master') {
         deleteDir()
         def shell = new shell()
         try {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "github_token",
+                     credentialsId   : "newgithubid",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "github_token",
+                     credentialsId   : "git_test1_oauth",
                      usernameVariable: 'scmClient',
                      passwordVariable: 'scmSecret'],
             ])
@@ -70,10 +70,10 @@ def call(String operation,String repoProjectName) {
 
                         stage('Checkout') {
                             //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
-                              shell.pipe("git clone https://${scmUser}:${scmPassword}@github.hdfcbankuat.com/ALCMAPIGEEUAT/${sfName}.git")
+                              shell.pipe("git clone https://${scmUser}:${scmPassword}@https://github.com/vinaykontham/sidgs-sharedlibrary/${ApiName}.git")
                                 shell.pipe("ls -la")
                                 shell.pipe("pwd")
-                              shell.pipe("cd ${sfName} ")
+                              shell.pipe("cd ${ApiName} ")
                                 shell.pipe("ls -la")
                             }
                         //}
@@ -81,29 +81,29 @@ def call(String operation,String repoProjectName) {
 
 
 
-            dir("${sfName}") {
+            dir("${ApiName}") {
                 BranchManagerService branchManagerService = new BranchManagerService()
                 switch (operation) {
                     case "release-create":
-                        branchManagerService.createRelease(params.sfName)
+                        branchManagerService.createRelease(params.ApiName)
                         break
                     case "release-close":
-                        branchManagerService.finishRelease(params.sfName)
+                        branchManagerService.finishRelease(params.ApiName)
                         break
                     case "release-candidate-create":
-                        branchManagerService.createReleaseCandidate(params.sfName)
+                        branchManagerService.createReleaseCandidate(params.ApiName)
                         break
                     case "feature-create":
-                        branchManagerService.createFeature(params.sfName)
+                        branchManagerService.createFeature(params.ApiName)
                         break
                     case "feature-close":
-                        branchManagerService.finishFeature(params.sfName)
+                        branchManagerService.finishFeature(params.ApiName)
                         break
                     case "hotfix-create":
-                        branchManagerService.createHotFix(params.sfName)
+                        branchManagerService.createHotFix(params.ApiName)
                         break
                     case "hotfix-close":
-                        branchManagerService.finishHotFix(params.sfName)
+                        branchManagerService.finishHotFix(params.ApiName)
                         break
                     default:
                         echo "invalid operation"
@@ -161,7 +161,7 @@ def runCommand(String command) {
     if (!isUnix()) {
         println command
         if (command.trim().toLowerCase().startsWith("mvn")) {
-            withMaven(globalMavenSettingsConfig: 'jfrog2', maven: 'maven') {
+            withMaven(globalMavenSettingsConfig: 'cicd-settings-file', maven: 'apigee-maven') {
                 bat returnStdout: true, script: "${command}"
             }
         } else {
@@ -171,7 +171,7 @@ def runCommand(String command) {
     } else {
         println command
         if (command.trim().toLowerCase().startsWith("mvn")) {
-            withMaven(globalMavenSettingsConfig: 'jfrog2', maven: 'maven') {
+            withMaven(globalMavenSettingsConfig: 'cicd-settings-file', maven: 'apigee-maven') {
                 sh returnStdout: true, script: command
             }
         } else {
@@ -180,3 +180,4 @@ def runCommand(String command) {
 
     }
 }
+
