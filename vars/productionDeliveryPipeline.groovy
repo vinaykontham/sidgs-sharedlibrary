@@ -101,10 +101,9 @@ def call(String build_number, String repoApiName) {
 
                         stage('Checkout') {
                             //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]])
-				{
+				
                                 shell.pipe("git clone https://${scmUser}:${scmPassword}@github.com/vinayko/${ApiName}.git")
-
-                            }
+                        
                         //}
                     }
             dir("${ApiName}") {
