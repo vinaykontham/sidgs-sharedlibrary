@@ -66,7 +66,7 @@ def call() {
         def mvnHome = tool name: DefaultConfigService.instance.tools.maven, type: 'maven'
 
         echo "Maven Home is ${mvnHome}"
-       //   def mvnExecutable = "${mvnHome}/bin/mvn"
+      def mvnExecutable = "${mvnHome}/opt/maven"
         
           def exampleApi = "mvn archetype:generate " +
             "-DarchetypeGroupId=com.hdfc.sharedflow.archetype.poc" +
