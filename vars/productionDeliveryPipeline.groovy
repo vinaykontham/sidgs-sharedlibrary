@@ -68,7 +68,7 @@ def call(String build_number, String repoApiName) {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "gitgub_token",
+                     credentialsId   : "github_token",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
                    
