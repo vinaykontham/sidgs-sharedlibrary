@@ -321,7 +321,7 @@ def call(String build_number, String repoApiName) {
 
         } 
         }
-        catch (any) {
+        catch  {
             println any.toString()
             JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
             currentBuild.result = 'FAILURE'
