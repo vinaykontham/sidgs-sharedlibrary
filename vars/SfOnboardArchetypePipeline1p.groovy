@@ -92,7 +92,6 @@ def call() {
         stage("create-scm-repo") {
          sh '''
          
-        //curl -k POST -u $scmUser:$scmPassword https://github.com/orgs/vinayko/repos -d '{"name":"'${sfName}'","private":true}'
         curl -L -k POST -u $scmUser:$scmPassword https://github.com/orgs/vinayko/repos -d '{"name":"'${sfName}'","private":true}'
          '''
     }
