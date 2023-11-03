@@ -31,13 +31,10 @@ def call(String operation,String repoProjectName) {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "newgithubid",
+                     credentialsId   : "github_token",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
-                    [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "git_test1_oauth",
-                     usernameVariable: 'scmClient',
-                     passwordVariable: 'scmSecret'],
+                    
             ])
 
                     {
@@ -70,7 +67,7 @@ def call(String operation,String repoProjectName) {
 
                         stage('Checkout') {
                             //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
-                              shell.pipe("git clone https://${scmUser}:${scmPassword}@github.hdfcbankuat.com/ALCMAPIGEEUAT/${sfName}.git")
+                              shell.pipe("git clone https://${scmUser}:${scmPassword}@github.com/vinayko/${sfName}.git")
                                 shell.pipe("ls -la")
                                 shell.pipe("pwd")
                               shell.pipe("cd ${sfName} ")
