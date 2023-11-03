@@ -321,12 +321,12 @@ def call(String build_number, String repoApiName) {
 
         } 
         }
-        catch  {
+        /*catch (any) {
             println any.toString()
             JenkinsUserUtils jenkinsUserUtils = new JenkinsUserUtils()
             currentBuild.result = 'FAILURE'
             DeploymentInfoService.instance.saveDeploymentStatus("FAILURE", env.BUILD_URL, jenkinsUserUtils.getUsernameForBuild())
-        }
+        }/*
     }
 }
 
