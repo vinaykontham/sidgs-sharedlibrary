@@ -329,6 +329,3 @@ def call(String build_number, String repoApiName) {
         }/*
     }
 }
-
-
-
