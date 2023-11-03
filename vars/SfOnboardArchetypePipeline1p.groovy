@@ -73,9 +73,9 @@ def call() {
             "-DarchetypeArtifactId=sf " +
             "-DarchetypeVersion=1.0.0-SNAPSHOT " +
             "-DgroupId=com-hdfc-sharedflow-commons " +
-            "-DartifactId=${params.sharedflow} " +
+            "-DartifactId=${params.sfName} " +
             "-Dpackage=sharedflow-parent-pom " +
-            "-DSharedFlow=${params.sharedflow} " +
+            "-DSharedFlow=${params.sfName} " +
             "-DinteractiveMode=false"
         
         def appUrl = "${env.BUILD_URL}ws"
