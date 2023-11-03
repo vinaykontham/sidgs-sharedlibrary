@@ -24,12 +24,12 @@ def call(String build_number, String repoApiName) {
         deleteDir()
         def shell = new shell()
 
-        try {
+       /* try {
 
             stage('access-token') {
 			withCredentials([file(credentialsId: 'github_token', variable: 'serviceAccount')]) {
                             script {
-                               git branch: 'rel-1.0.0', credentialsId: 'github_token', url: 'https://github.com/vinyko/token-repo.git'
+                               git branch: 'rel-1.0', credentialsId: 'github_token', url: 'https://github.com/vinyko/token-repo.git'
                             sh '''
                             ls -la
                             
@@ -49,7 +49,7 @@ def call(String build_number, String repoApiName) {
                             //echo "${env.access}"
                     }
                   }
-                        def token = readFile"${env.WORKSPACE}/token"
+                        def token = readFile"${env.WORKSPACE}/token"*/
 
             stage('init') {
 
