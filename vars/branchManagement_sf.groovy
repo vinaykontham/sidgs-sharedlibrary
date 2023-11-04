@@ -22,7 +22,7 @@ This pipeline is used for handling branch management on the repos
 3. Release branches
 4. Release candidates
  */
-def call(String operation,String repoProjectName) {
+def call(String operation,String sfName) {
 
     node {
         deleteDir()
