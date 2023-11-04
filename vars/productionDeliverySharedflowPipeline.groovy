@@ -23,7 +23,7 @@ def call(String build_number, String reposfName) {
         def shell = new shell()
 
         try {
-            stage('access-token') {
+         /*   stage('access-token') {
 			withCredentials([file(credentialsId: 'hdfcbank-apigee-runtime-uat', variable: 'serviceAccount')]) {
                             script {
                                git branch: 'master', credentialsId: 'newgithubid', url: 'https://github.hdfcbankuat.com/ALCMAPIGEEUAT/token-repo.git'
@@ -45,7 +45,7 @@ def call(String build_number, String reposfName) {
                             //env.access = access_token
                             //echo "${env.access}"
                     }
-                  }
+                  }*/
                         def token = readFile"${env.WORKSPACE}/token"
 
             stage('init') {
@@ -63,13 +63,10 @@ def call(String build_number, String reposfName) {
 
             withCredentials([
                     [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "newgithubid",
+                     credentialsId   : "github_token",
                      usernameVariable: 'scmUser',
                      passwordVariable: 'scmPassword'],
-                    [$class          : 'UsernamePasswordMultiBinding',
-                     credentialsId   : "git_test1_oauth",
-                     usernameVariable: 'scmClient',
-                     passwordVariable: 'scmSecret'],
+                   
             ])
                     {
 
@@ -140,7 +137,7 @@ def call(String build_number, String reposfName) {
                         entityDeploymentInfos.each {
                             withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                                 echo "deploying apirpoxy"
-                                maven.runCommand("mvn -X apigee-enterprise:deploy -Phybrid-sharedflow -Dorg=${it.org} -Denv=${it.env} -Dbearer=${token}")
+                                maven.runCommand("mvn -X apigee-enterprise:deploy -Phybrid-sharedflow -Dorg=${it.org} -Denv=${it.env} -Dfile=$(serviceAccount)")
                             }
                             DeploymentInfoService.instance.setApiName(artifactId)
                             DeploymentInfoService.instance.setApiVersion(version)
@@ -153,7 +150,7 @@ def call(String build_number, String reposfName) {
                     if (DefaultConfigService.instance.steps.release) {
 
                         stage('upload-artifact') {
-                            withCredentials([usernameColonPassword(credentialsId: 'artifactory_id', variable: 'NEXUS')]) {
+                            withCredentials([usernameColonPassword(credentialsId: 'jfrog', variable: 'NEXUS')]) {
                             maven.runCommand("mvn -X deploy")
                         }
                     }
