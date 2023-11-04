@@ -96,7 +96,7 @@ def call(String build_number, String reposfName) {
 
                         stage('Checkout') {
                             //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
-                                shell.pipe("git clone https://${scmUser}:${scmPassword}@github.hdfcbankuat.com/ALCMAPIGEEUAT/${sfName}.git")
+                                shell.pipe("git clone https://${scmUser}:${scmPassword}@github.com/vinayko/${sfName}.git")
 
                             }
                         //}
@@ -137,7 +137,7 @@ def call(String build_number, String reposfName) {
                         entityDeploymentInfos.each {
                             withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                                 echo "deploying apirpoxy"
-                                maven.runCommand("mvn -X apigee-enterprise:deploy -Phybrid-sharedflow -Dorg=${it.org} -Denv=${it.env} -Dfile=$(serviceAccount)")
+                                maven.runCommand("mvn -X apigee-enterprise:deploy -Phybrid-sharedflow -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount}")
                             }
                             DeploymentInfoService.instance.setApiName(artifactId)
                             DeploymentInfoService.instance.setApiVersion(version)
