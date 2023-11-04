@@ -46,7 +46,7 @@ def call(String build_number, String reposfName) {
                             //echo "${env.access}"
                     }
                   }*/
-                        def token = readFile"${env.WORKSPACE}/token"
+                       // def token = readFile"${env.WORKSPACE}/token"
 
             stage('init') {
                 // TeamService service = new TeamService();
