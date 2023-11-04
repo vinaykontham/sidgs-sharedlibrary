@@ -138,7 +138,7 @@ def call(String branchType, String build_number) {
 
           if (DefaultConfigService.instance.steps.release) {
             stage('upload-artifact') 
-                withCredentials([usernameColonPassword(credentialsId: 'artifactory_id', variable: 'NEXUS')]) {
+                withCredentials([usernameColonPassword(credentialsId: 'jfrog', variable: 'NEXUS')]) {
               maven.runCommand("mvn -X deploy")
             }
 
