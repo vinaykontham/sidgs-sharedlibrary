@@ -126,7 +126,7 @@ def call(String branchType, String build_number) {
             entityDeploymentInfos.each {
               withCredentials([file(credentialsId: it.org, variable: 'serviceAccount')]) {
                 echo "deploying sharedflow"
-                maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-sharedflow -Dorg=${it.org} -Denv=${it.env} -Dbearer=${token}")
+                maven.runCommand("mvn -X package apigee-enterprise:deploy -Phybrid-sharedflow -Dorg=${it.org} -Denv=${it.env} -Dfile=${serviceAccount}")
               }
 
               DeploymentInfoService.instance.setApiName(artifactId)
