@@ -24,7 +24,7 @@ This pipeline is used for handling branch management on the repos
  */
 def call(String operation,String repoProjectName) {
 
-    node {
+    node ('master'){
         deleteDir()
         def shell = new shell()
         try {
