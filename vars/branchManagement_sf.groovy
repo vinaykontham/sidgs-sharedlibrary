@@ -24,7 +24,7 @@ This pipeline is used for handling branch management on the repos
  */
 def call(String operation,String repoProjectName) {
 
-   // node {
+    node {
         deleteDir()
         def shell = new shell()
         try {
@@ -115,7 +115,7 @@ def call(String operation,String repoProjectName) {
                 DeploymentInfoService.instance.saveDeploymentStatus("FAILURE", env.BUILD_URL,jenkinsUserUtils.getUsernameForBuild())
             }
         }
-    }
+}
 
 @NonCPS
 def parseJsonText(String json) {
