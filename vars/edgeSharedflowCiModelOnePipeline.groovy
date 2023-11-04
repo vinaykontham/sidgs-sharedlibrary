@@ -19,13 +19,13 @@ This pipeline is used to perform CI on sharedflows
 
 def call(String branchType, String build_number) {
 
-  node ("master") {
+  node  {
     deleteDir()
     try {
-      stage('access-token') {
-			withCredentials([file(credentialsId: 'hdfcbank-apigee-runtime-dev', variable: 'serviceAccount')]) {
+      /*stage('access-token') {
+			withCredentials([file(credentialsId: '', variable: 'serviceAccount')]) {
                             script {
-                               git branch: 'master', credentialsId: 'newgithubid', url: 'https://github.hdfcbankuat.com/ALCMAPIGEEUAT/token-repo.git'
+                               git branch: 'master', credentialsId: 'github_token', url: 'https://githubcom/vinayko/token-repo.git'
                             sh '''
                             ls -la
                             
@@ -46,7 +46,7 @@ def call(String branchType, String build_number) {
                     }
                   }
                         def token = readFile"${env.WORKSPACE}/token"
-			                  def bearer = readFile"${env.WORKSPACE}/token"
+			                  def bearer = readFile"${env.WORKSPACE}/token"*/
 
       stage('Checkout') {
         checkout scm
