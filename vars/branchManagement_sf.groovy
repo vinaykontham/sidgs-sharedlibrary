@@ -22,7 +22,7 @@ This pipeline is used for handling branch management on the repos
 3. Release branches
 4. Release candidates
  */
-def call(String operation,String sfName) {
+def call(String operation,String repoProjectName) {
 
     node {
         deleteDir()
@@ -68,6 +68,7 @@ def call(String operation,String sfName) {
                         stage('Checkout') {
                             //wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: scmAccessToken, var: 'SECRET']]]) {
                               shell.pipe("git clone https://${scmUser}:${scmPassword}@github.com/vinayko/${sfName}.git")
+                              
                                 shell.pipe("ls -la")
                                 shell.pipe("pwd")
                               shell.pipe("cd ${sfName} ")
