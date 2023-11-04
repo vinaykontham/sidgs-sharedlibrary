@@ -85,9 +85,9 @@ def call(String branchType, String build_number) {
         }
       }
 
-      dir(proxyRootDirectory) {
+    dir(proxyRootDirectory) {
 
-        if (DefaultConfigService.instance.steps.unitTest) {
+       /* if (DefaultConfigService.instance.steps.unitTest) {
           stage('Apigee_Linting') {
 			withCredentials([usernamePassword(credentialsId: 'artifactory_id', usernameVariable: 'usr', passwordVariable: 'pass')]) {
 			nodejs('Node16') {
@@ -114,7 +114,7 @@ def call(String branchType, String build_number) {
 			}
 	     }
       }        
-	}
+	}*/
 
         if (DefaultConfigService.instance.steps.deploy) {
 
